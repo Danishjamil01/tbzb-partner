@@ -140,8 +140,9 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #111827;
-      color: #fff;
+      background: #f8fafc;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
       border-radius: 12px 12px 0 0;
     }
 
@@ -149,25 +150,29 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #10b981;
+      background: #0f172a;
       color: #fff;
       border: none;
       padding: 8px 16px;
       border-radius: 8px;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 14px;
       cursor: pointer;
       &:active { transform: scale(0.97); }
     }
 
     .btn-close {
-      background: transparent;
-      border: none;
-      color: #9ca3af;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #64748b;
       cursor: pointer;
       display: flex;
       align-items: center;
-      &:hover { color: #fff; }
+      justify-content: center;
+      &:hover { color: #0f172a; background: #e2e8f0; }
     }
 
     /* Thermal Receipt Styling */
@@ -300,3 +305,4 @@ export class ReceiptModalComponent {
     }
   }
 }
+

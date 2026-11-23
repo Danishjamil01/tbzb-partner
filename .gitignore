@@ -39,6 +39,13 @@ testem.log
 /typings
 __screenshots__/
 
+# Android build artifacts
+android/app/build/
+android/.gradle/
+android/build/
+*.apk
+*.aab
+
 # System files
 .DS_Store
 Thumbs.db

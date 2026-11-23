@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from './shared/components/icon/icon.component';
 import { ToastContainerComponent } from './shared/components/toast/toast.component';
+import { SplashScreenComponent } from './shared/components/splash-screen/splash-screen.component';
 import { InrPipe } from './shared/pipes/inr.pipe';
 import { ReceiptModalComponent } from './features/receipt/receipt-modal.component';
 
@@ -22,6 +23,7 @@ import { MenuItem, FoodCategory } from './core/models/menu.model';
     FormsModule,
     IconComponent,
     ToastContainerComponent,
+    SplashScreenComponent,
     InrPipe,
     ReceiptModalComponent
   ],
@@ -34,6 +36,9 @@ export class App implements OnInit, OnDestroy {
   statusService = inject(BusinessStatusService);
   adminService = inject(AdminService);
   toastService = inject(ToastService);
+
+  // Splash Screen State
+  showSplash = signal<boolean>(true);
 
   // Active Screen Tab
   activeTab = signal<'orders' | 'menu' | 'store' | 'settings'>('orders');
@@ -57,7 +62,6 @@ export class App implements OnInit, OnDestroy {
   isDishModalOpen = signal<boolean>(false);
   isNewDish = signal<boolean>(false);
   editingDish: MenuItem = this.getEmptyDish();
-  imageTab: 'gallery' | 'camera' | 'url' = 'gallery';
   isProcessingImage = false;
 
   // New PIN Form
@@ -91,16 +95,42 @@ export class App implements OnInit, OnDestroy {
   soldOutCount = computed(() => this.menuService.allItems().filter(d => !d.isAvailable).length);
 
   ngOnInit(): void {
-    // If not authenticated, default to true if remember me was saved
     if (this.adminService.isAuthenticated()) {
       this.orderService.startPolling(8000);
       this.adminService.syncFromCloud(false);
     }
   }
 
+  onSplashFinished(): void {
+    this.showSplash.set(false);
+  }
+
   ngOnDestroy(): void {
     this.orderService.stopPolling();
     this.orderService.stopAlarm();
+  }
+
+  /* ==========================================================================
+     IMAGE RESOLVER: ONLY ACTUAL ITEM IMAGES
+     ========================================================================== */
+  getItemImageByName(itemName: string): string | null {
+    if (!itemName) return null;
+    const clean = itemName.trim().toLowerCase();
+    const match = this.menuService.allItems().find(d => 
+      d.name.toLowerCase() === clean || clean.includes(d.name.toLowerCase())
+    );
+    return match?.imageUrl || null;
+  }
+
+  onImgError(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (target) {
+      target.style.display = 'none';
+      const fallback = target.nextElementSibling as HTMLElement;
+      if (fallback) {
+        fallback.style.display = 'flex';
+      }
+    }
   }
 
   /* ==========================================================================
@@ -198,7 +228,7 @@ export class App implements OnInit, OnDestroy {
   toggleDishStock(dish: MenuItem): void {
     const newStatus = this.menuService.toggleAvailability(dish.id);
     this.toastService.show(
-      `"${dish.name}" is now ${newStatus ? 'IN STOCK ✅' : 'OUT OF STOCK ❌'}`,
+      `"${dish.name}" is now ${newStatus ? 'IN STOCK' : 'OUT OF STOCK'}`,
       newStatus ? 'success' : 'warning'
     );
     this.adminService.syncToCloud();
@@ -235,21 +265,16 @@ export class App implements OnInit, OnDestroy {
       return;
     }
 
-    const placeholder = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80';
-    const finalImage = this.editingDish.imageUrl?.trim() || placeholder;
-
     if (this.isNewDish()) {
       const newDish: MenuItem = {
         ...this.editingDish,
-        id: 'tbzb_' + Date.now().toString(36),
-        imageUrl: finalImage
+        id: 'tbzb_' + Date.now().toString(36)
       };
       this.menuService.addItem(newDish);
       this.toastService.show(`"${newDish.name}" added to menu!`, 'success');
     } else {
       const updatedDish: MenuItem = {
-        ...this.editingDish,
-        imageUrl: finalImage
+        ...this.editingDish
       };
       this.menuService.updateItem(updatedDish.id, updatedDish);
       this.toastService.show(`"${updatedDish.name}" updated!`, 'success');
@@ -288,7 +313,7 @@ export class App implements OnInit, OnDestroy {
   setStoreMode(mode: 'auto' | 'open' | 'closed'): void {
     this.statusService.setKitchenOverride(mode);
     const msg = mode === 'open'
-      ? 'Store forced OPEN! Customers can order now.'
+      ? 'Store forced OPEN! Orders accepted now.'
       : mode === 'closed'
         ? 'Store forced CLOSED! Orders paused.'
         : 'Store returned to Auto Schedule (10:00 AM – 1:00 AM).';

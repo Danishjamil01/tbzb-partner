@@ -1,0 +1,136 @@
+.tbzb-splash {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #FFFFFF;
+  z-index: 9999999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  padding: env(safe-area-inset-top, 24px) 20px env(safe-area-inset-bottom, 36px);
+  box-sizing: border-box;
+
+  &.fade-exit {
+    opacity: 0;
+    transform: scale(1.01);
+    pointer-events: none;
+  }
+}
+
+/* 1. Center Brand Logo Section */
+.splash-center-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: max(4vh, 16px);
+  gap: 16px;
+
+  .brand-logo-img {
+    width: 76%;
+    max-width: 270px;
+    height: auto;
+    object-fit: contain;
+    animation: logoAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .partner-pill-badge {
+    background: #fef2f2;
+    color: #e23744;
+    border: 1px solid #fee2e2;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    padding: 5px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(226, 55, 68, 0.08);
+    animation: fadeIn 0.6s ease-out 0.15s both;
+  }
+}
+
+/* 2. Bottom Circular Red Loader & Status Text */
+.splash-bottom-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: max(5vh, 28px);
+  width: 100%;
+  animation: fadeIn 0.6s ease-out 0.2s both;
+
+  .circular-spinner-box {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .circular-loader {
+      width: 100%;
+      height: 100%;
+      animation: spinLoader 0.9s linear infinite;
+      transform-origin: center center;
+
+      .loader-track {
+        stroke: #E5E7EB;
+      }
+
+      .loader-arc {
+        stroke: #E52E1D;
+        stroke-dasharray: 45, 150;
+        stroke-dashoffset: 0;
+      }
+    }
+  }
+
+  .loading-status-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748B;
+    margin: 0;
+    letter-spacing: 0.1px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+/* Smooth Animations */
+@keyframes spinLoader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logoAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

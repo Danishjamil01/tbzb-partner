@@ -1,137 +1,154 @@
-<div class="partner-app-container">
-  <!-- 1. PERSISTENT NEW ORDER SIREN BANNER (Pulsing Red / Amber) -->
+<div class="partner-app-root">
+  <!-- 0. CLEAN MINIMALIST SPLASH SCREEN -->
+  @if (showSplash()) {
+    <app-splash-screen (splashFinished)="onSplashFinished()"></app-splash-screen>
+  }
+
+  <!-- 1. HIGH-PRIORITY LIVE SIREN ALERT (Swiggy / Zomato Urgent Order Bar) -->
   @if (orderService.isAlarmRinging()) {
-    <div class="siren-alert-banner">
-      <div class="siren-pulse-circle">🚨</div>
-      <div class="siren-text-content">
-        <strong class="title">NEW ORDER WAITING!</strong>
-        <span class="sub">Continuous alarm ringing until accepted</span>
+    <div class="siren-alert-strip">
+      <div class="siren-pulse-badge">
+        <span class="bell-ringing">🔔</span>
+        <div class="pulse-ring"></div>
       </div>
-      <button class="btn-silence-siren" (click)="stopSiren()">
-        <app-icon name="volume-x" [size]="18" />
-        <span>Stop Siren</span>
-      </button>
+      <div class="siren-details">
+        <h4 class="alert-headline">NEW ORDER RECEIVED!</h4>
+        <p class="alert-caption">Urgent: Continuous alarm ringing until accepted</p>
+      </div>
+      <div class="siren-quick-actions">
+        <button class="btn-siren-silence" (click)="stopSiren()" title="Mute Siren">
+          <app-icon name="volume-x" [size]="16" />
+          <span>Mute</span>
+        </button>
+      </div>
     </div>
   }
 
-  <!-- 2. LOGIN VIEW (If Not Authenticated) -->
+  <!-- 2. LOGIN SCREEN (Light Theme - Minimalist & Secure) -->
   @if (!adminService.isAuthenticated()) {
-    <div class="login-wrapper">
-      <div class="login-box">
-        <div class="brand-badge-pill">TBZB PARTNER</div>
-        <div class="lock-circle">
-          <app-icon name="lock" [size]="32" />
+    <div class="login-page-screen">
+      <div class="login-card-surface">
+        <div class="brand-header-group">
+          <img src="images/splash-tbzb-logo.png" alt="TBZB Logo" class="login-logo-img" />
+          <div class="partner-tag">RESTAURANT PARTNER</div>
         </div>
-        <h2>Restaurant Partner Portal</h2>
-        <p class="subtitle">Enter your Admin PIN to manage orders, live kitchen status, and store availability.</p>
 
-        <form (ngSubmit)="onLogin()" class="login-form">
-          <div class="input-wrap">
+        <h2 class="login-title">Kitchen Portal Login</h2>
+        <p class="login-hint">Enter your 6-digit partner PIN to access live orders, manage cooking status, and control menu stock.</p>
+
+        <form (ngSubmit)="onLogin()" class="clean-login-form">
+          <div class="pin-field-wrapper">
             <input
               [type]="showPassword ? 'text' : 'password'"
-              placeholder="Enter Partner PIN (6 digits)"
+              placeholder="Enter Partner PIN"
               [(ngModel)]="pinInput"
               name="partnerPin"
               autocomplete="current-password"
+              maxlength="12"
               [disabled]="isLockedOut()"
               autofocus
             />
-            <button type="button" class="btn-toggle-eye" (click)="showPassword = !showPassword">
+            <button type="button" class="btn-eye-toggle" (click)="showPassword = !showPassword">
               <app-icon [name]="showPassword ? 'eye-off' : 'eye'" [size]="18" />
             </button>
           </div>
 
           @if (isLockedOut()) {
-            <div class="lockout-alert">
+            <div class="lockout-notice">
               <app-icon name="alert-circle" [size]="16" />
-              <span>Too many attempts. Locked for 5 mins.</span>
+              <span>Too many failed attempts. Locked for 5 mins.</span>
             </div>
           }
 
-          <div class="meta-row">
-            <label class="remember">
+          <div class="login-options-row">
+            <label class="remember-label">
               <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
-              <span>Keep me logged in</span>
+              <span>Stay signed in</span>
             </label>
-            <span class="secure-tag">
+            <span class="security-chip">
               <app-icon name="shield-check" [size]="14" />
-              <span>Encrypted</span>
+              <span>SHA-256 Secure</span>
             </span>
           </div>
 
-          <button type="submit" class="btn-login-action" [disabled]="isLockedOut()">
-            <span>Enter Kitchen Dashboard</span>
+          <button type="submit" class="btn-enter-dashboard" [disabled]="isLockedOut()">
+            <span>Access Kitchen Dashboard</span>
             <app-icon name="arrow-right" [size]="18" />
           </button>
         </form>
       </div>
     </div>
   } @else {
-    <!-- 3. AUTHENTICATED PARTNER DASHBOARD -->
-    <header class="partner-header">
-      <div class="brand-group">
-        <span class="partner-badge">PARTNER</span>
-        <span class="restaurant-name">The Bite Zone</span>
+    <!-- 3. MAIN AUTHENTICATED PARTNER DASHBOARD (LIGHT THEME) -->
+    <header class="app-top-navbar">
+      <div class="nav-left-brand">
+        <div class="logo-box">
+          <img src="images/splash-tbzb-logo.png" alt="TBZB" />
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">The Bite Zone</span>
+          <span class="partner-badge-text">PARTNER</span>
+        </div>
       </div>
 
-      <div class="header-right-tools">
-        <!-- Live Kitchen Status Pill (Instant Store Toggle) -->
+      <div class="nav-right-actions">
+        <!-- Swiggy-style Online / Offline Store Toggle -->
         <button
-          class="status-toggle-pill"
-          [class.open]="statusService.status().isOpen"
-          [class.closed]="!statusService.status().isOpen"
+          class="kitchen-online-pill"
+          [class.online]="statusService.status().isOpen"
+          [class.offline]="!statusService.status().isOpen"
           (click)="setStoreMode(statusService.status().isOpen ? 'closed' : 'open')"
-          [title]="statusService.status().isOpen ? 'Tap to Pause Kitchen' : 'Tap to Open Kitchen'"
+          [title]="statusService.status().isOpen ? 'Store is OPEN (Tap to Pause)' : 'Store is CLOSED (Tap to Open)'"
         >
-          <span class="pulse-dot"></span>
-          <span class="label">{{ statusService.status().isOpen ? 'OPEN' : 'CLOSED' }}</span>
+          <span class="live-status-dot"></span>
+          <span class="status-name">{{ statusService.status().isOpen ? 'ONLINE' : 'PAUSED' }}</span>
         </button>
 
-        <!-- Siren Volume Toggle -->
-        <button class="icon-tool-btn" (click)="toggleSound()" [title]="orderService.soundEnabled() ? 'Mute Siren' : 'Enable Siren'">
+        <!-- Siren Mute / Unmute Toggle -->
+        <button class="nav-circle-btn" (click)="toggleSound()" [title]="orderService.soundEnabled() ? 'Mute Order Chime' : 'Enable Order Chime'">
           <app-icon [name]="orderService.soundEnabled() ? 'volume-2' : 'volume-x'" [size]="18" />
         </button>
 
-        <!-- Refresh Orders -->
-        <button class="icon-tool-btn" (click)="refreshOrders()" title="Refresh Orders">
+        <!-- Refresh Data -->
+        <button class="nav-circle-btn" (click)="refreshOrders()" title="Refresh Orders">
           <app-icon name="refresh-cw" [size]="18" />
         </button>
 
         <!-- Logout -->
-        <button class="icon-tool-btn logout" (click)="onLogout()" title="Logout">
+        <button class="nav-circle-btn btn-logout" (click)="onLogout()" title="Logout">
           <app-icon name="unlock" [size]="18" />
         </button>
       </div>
     </header>
 
-    <!-- Top Tab Navigation -->
-    <nav class="partner-tabs">
+    <!-- Top Tab Navigation Bar -->
+    <nav class="app-tab-strip">
       <button
-        class="tab-item"
+        class="tab-nav-btn"
         [class.active]="activeTab() === 'orders'"
         (click)="activeTab.set('orders')"
       >
         <app-icon name="shopping-bag" [size]="18" />
         <span>Live Orders</span>
         @if (orderService.activeOrdersCount() > 0) {
-          <span class="badge-count" [class.new-pulse]="orderService.newOrdersCount() > 0">
+          <span class="counter-badge" [class.badge-alert]="orderService.newOrdersCount() > 0">
             {{ orderService.activeOrdersCount() }}
           </span>
         }
       </button>
 
       <button
-        class="tab-item"
+        class="tab-nav-btn"
         [class.active]="activeTab() === 'menu'"
         (click)="activeTab.set('menu')"
       >
         <app-icon name="utensils" [size]="18" />
         <span>Menu & Stock</span>
-        <span class="badge-stock">{{ inStockCount() }}/{{ menuService.allItems().length }}</span>
+        <span class="stock-pill">{{ inStockCount() }}/{{ menuService.allItems().length }}</span>
       </button>
 
       <button
-        class="tab-item"
+        class="tab-nav-btn"
         [class.active]="activeTab() === 'store'"
         (click)="activeTab.set('store')"
       >
@@ -140,7 +157,7 @@
       </button>
 
       <button
-        class="tab-item"
+        class="tab-nav-btn"
         [class.active]="activeTab() === 'settings'"
         (click)="activeTab.set('settings')"
       >
@@ -149,45 +166,45 @@
       </button>
     </nav>
 
-    <!-- MAIN BODY CONTENT -->
-    <main class="partner-main-body">
+    <!-- MAIN BODY -->
+    <main class="app-main-viewport">
       <!-- ============================================== -->
-      <!-- TAB 1: LIVE ORDERS DASHBOARD                  -->
+      <!-- TAB 1: LIVE ORDERS (Swiggy / Zomato Kitchen)  -->
       <!-- ============================================== -->
       @if (activeTab() === 'orders') {
-        <div class="orders-tab-view">
-          <!-- Status Filter Tabs -->
-          <div class="order-filter-bar">
+        <div class="orders-screen-content">
+          <!-- Filter Chips -->
+          <div class="filter-chips-row">
             <button
-              class="filter-pill"
+              class="chip-btn"
               [class.active]="orderService.statusFilter() === 'all'"
               (click)="orderService.statusFilter.set('all')"
             >
               All ({{ orderService.orders().length }})
             </button>
             <button
-              class="filter-pill pill-new"
+              class="chip-btn chip-red"
               [class.active]="orderService.statusFilter() === 'new'"
               (click)="orderService.statusFilter.set('new')"
             >
-              🔴 New ({{ orderService.newOrdersCount() }})
+              🔴 New Orders ({{ orderService.newOrdersCount() }})
             </button>
             <button
-              class="filter-pill pill-prep"
+              class="chip-btn chip-amber"
               [class.active]="orderService.statusFilter() === 'preparing'"
               (click)="orderService.statusFilter.set('preparing')"
             >
               👨‍🍳 Preparing ({{ orderService.preparingCount() }})
             </button>
             <button
-              class="filter-pill pill-out"
+              class="chip-btn chip-blue"
               [class.active]="orderService.statusFilter() === 'out_for_delivery'"
               (click)="orderService.statusFilter.set('out_for_delivery')"
             >
-              🛵 Out ({{ orderService.outForDeliveryCount() }})
+              🛵 Out for Delivery ({{ orderService.outForDeliveryCount() }})
             </button>
             <button
-              class="filter-pill pill-done"
+              class="chip-btn chip-green"
               [class.active]="orderService.statusFilter() === 'delivered'"
               (click)="orderService.statusFilter.set('delivered')"
             >
@@ -195,125 +212,151 @@
             </button>
           </div>
 
-          <!-- Orders Grid / List -->
+          <!-- Empty State -->
           @if (orderService.filteredOrders().length === 0) {
-            <div class="empty-orders-view">
-              <app-icon name="shopping-bag" [size]="48" />
-              <h3>No orders in this status</h3>
-              <p>New orders placed by customers will ring and show up here automatically.</p>
-              <button class="btn-refresh-pulse" (click)="refreshOrders()">
+            <div class="clean-empty-state">
+              <div class="empty-icon-circle">
+                <app-icon name="shopping-bag" [size]="40" />
+              </div>
+              <h3>No orders right now</h3>
+              <p>Whenever a customer places an order, it will appear here with an automatic loud siren alert.</p>
+              <button class="btn-check-orders" (click)="refreshOrders()">
                 <app-icon name="refresh-cw" [size]="16" />
-                <span>Check for New Orders</span>
+                <span>Refresh Orders</span>
               </button>
             </div>
           } @else {
-            <div class="orders-grid">
+            <div class="orders-card-stack">
               @for (order of orderService.filteredOrders(); track order.orderId) {
-                <div class="order-card" [ngClass]="'status-' + order.status" [class.card-alert-glow]="order.status === 'new'">
-                  <!-- Card Header -->
-                  <div class="card-header">
-                    <div class="id-time">
-                      <span class="order-id">#{{ order.orderId }}</span>
-                      <span class="order-time">{{ getRelativeTime(order.createdAt) }}</span>
+                <div class="swiggy-order-card" [ngClass]="'border-' + order.status" [class.glow-urgent]="order.status === 'new'">
+                  <!-- Top Card Header -->
+                  <div class="order-top-bar">
+                    <div class="order-id-block">
+                      <span class="order-id-num">#{{ order.orderId }}</span>
+                      <span class="order-time-elapsed">{{ getRelativeTime(order.createdAt) }}</span>
                     </div>
 
                     <!-- Status Pill -->
-                    <span class="status-badge" [ngClass]="order.status">
+                    <span class="stage-tag" [ngClass]="order.status">
                       @switch (order.status) {
                         @case ('new') { 🔴 NEW ORDER }
                         @case ('preparing') { 👨‍🍳 PREPARING }
-                        @case ('out_for_delivery') { 🛵 ON THE WAY }
+                        @case ('out_for_delivery') { 🛵 OUT FOR DELIVERY }
                         @case ('delivered') { ✅ DELIVERED }
                         @case ('cancelled') { ❌ CANCELLED }
                       }
                     </span>
                   </div>
 
-                  <!-- Customer Info Strip -->
-                  <div class="customer-strip">
-                    <div class="customer-info">
-                      <strong class="cust-name">{{ order.customerName }}</strong>
-                      <span class="cust-address">{{ order.flatNumber }}, {{ order.areaLocality }}</span>
+                  <!-- Customer Details -->
+                  <div class="customer-info-box">
+                    <div class="customer-text-col">
+                      <strong class="customer-name">{{ order.customerName }}</strong>
+                      <span class="customer-address">
+                        <app-icon name="map-pin" [size]="14" />
+                        <span>{{ order.flatNumber }}, {{ order.areaLocality }}</span>
+                      </span>
                       @if (order.landmark) {
-                        <span class="cust-landmark">Near {{ order.landmark }}</span>
+                        <span class="customer-landmark">Near {{ order.landmark }}</span>
                       }
                     </div>
 
-                    <!-- Quick Contact Buttons -->
-                    <div class="contact-actions">
-                      <a [href]="'tel:+91' + order.mobileNumber" class="btn-call" title="Call Customer">
-                        <app-icon name="phone" [size]="16" />
+                    <!-- Contact Action Buttons -->
+                    <div class="quick-contact-cluster">
+                      <a [href]="'tel:+91' + order.mobileNumber" class="contact-pill-btn call" title="Call Customer">
+                        <app-icon name="phone" [size]="15" />
                         <span>Call</span>
                       </a>
-                      <a [href]="getWhatsAppUrl(order)" target="_blank" class="btn-whatsapp" title="WhatsApp Customer">
-                        <app-icon name="whatsapp" [size]="16" />
+                      <a [href]="getWhatsAppUrl(order)" target="_blank" class="contact-pill-btn whatsapp" title="WhatsApp Customer">
+                        <app-icon name="whatsapp" [size]="15" />
                       </a>
                       @if (order.googleMapsUrl) {
-                        <a [href]="order.googleMapsUrl" target="_blank" class="btn-map" title="Navigate with Google Maps">
-                          <app-icon name="navigation" [size]="16" />
+                        <a [href]="order.googleMapsUrl" target="_blank" class="contact-pill-btn map" title="Open Map">
+                          <app-icon name="navigation" [size]="15" />
                         </a>
                       }
                     </div>
                   </div>
 
-                  <!-- Itemized Food List -->
-                  <div class="items-list">
+                  <!-- Order Items Breakdown (With Real Dish Photo) -->
+                  <div class="order-items-table">
                     @for (item of order.items; track item.name) {
-                      <div class="food-line">
-                        <span class="qty-badge">{{ item.quantity }}x</span>
-                        <span class="food-name">{{ item.name }}</span>
-                        <span class="food-price">₹{{ item.price * item.quantity }}</span>
+                      <div class="dish-item-row">
+                        <!-- Actual Dish Image / Fallback Icon -->
+                        <div class="dish-thumb-box">
+                          @if (getItemImageByName(item.name); as imgSrc) {
+                            <img [src]="imgSrc" [alt]="item.name" (error)="onImgError($event)" />
+                          }
+                          <div class="dish-thumb-fallback">
+                            <app-icon name="utensils" [size]="18" />
+                          </div>
+                        </div>
+
+                        <div class="dish-name-col">
+                          <span class="dish-title-text">{{ item.name }}</span>
+                          <span class="dish-unit-price">₹{{ item.price }} per item</span>
+                        </div>
+
+                        <div class="dish-qty-col">
+                          <span class="qty-bubble">x{{ item.quantity }}</span>
+                        </div>
+
+                        <div class="dish-total-col">
+                          <span class="item-line-total">₹{{ item.price * item.quantity }}</span>
+                        </div>
                       </div>
                     }
                   </div>
 
-                  <!-- Bill Summary Strip -->
-                  <div class="bill-summary">
-                    <div class="pay-tag" [class.tag-paid]="order.paymentMethod === 'upi'">
-                      {{ order.paymentMethod === 'cod' ? '💵 CASH ON DELIVERY' : '📱 PAID ONLINE (UPI)' }}
+                  <!-- Bill Calculation & Payment Method -->
+                  <div class="bill-summary-strip">
+                    <div class="payment-method-badge" [class.paid-online]="order.paymentMethod === 'upi'">
+                      {{ order.paymentMethod === 'cod' ? '💵 CASH ON DELIVERY' : '📱 ONLINE PAID (UPI)' }}
                     </div>
-                    <div class="total-wrap">
-                      <span class="total-label">Total:</span>
-                      <strong class="total-val">₹{{ order.total }}</strong>
+
+                    <div class="totals-amount-display">
+                      <span class="label">Total Amount:</span>
+                      <strong class="total-figure">₹{{ order.total }}</strong>
                     </div>
                   </div>
 
-                  <!-- Action Buttons Bar -->
-                  <div class="order-action-bar">
+                  <!-- Action Buttons Toolbar -->
+                  <div class="order-card-actions">
                     @if (order.status === 'new') {
-                      <button class="btn-action-primary accept" (click)="acceptOrder(order)">
+                      <button class="btn-action-hero btn-accept" (click)="acceptOrder(order)">
                         <app-icon name="check" [size]="18" />
                         <span>ACCEPT ORDER (Start Cooking)</span>
                       </button>
-                      <button class="btn-action-secondary cancel" (click)="cancelOrder(order)" title="Reject Order">
+                      <button class="btn-action-subtle btn-reject" (click)="cancelOrder(order)" title="Reject Order">
                         <app-icon name="x" [size]="18" />
                       </button>
                     }
 
                     @if (order.status === 'preparing') {
-                      <button class="btn-action-primary dispatch" (click)="markOutForDelivery(order)">
+                      <button class="btn-action-hero btn-dispatch" (click)="markOutForDelivery(order)">
                         <app-icon name="delivery-scooter" [size]="18" />
                         <span>FOOD READY (Dispatch Rider)</span>
                       </button>
-                      <button class="btn-action-secondary print" (click)="openReceipt(order)" title="Print Thermal Slip">
+                      <button class="btn-action-subtle btn-print-kot" (click)="openReceipt(order)" title="Print Kitchen Slip">
                         <app-icon name="printer" [size]="18" />
+                        <span>Print Slip</span>
                       </button>
                     }
 
                     @if (order.status === 'out_for_delivery') {
-                      <button class="btn-action-primary deliver" (click)="markDelivered(order)">
+                      <button class="btn-action-hero btn-deliver" (click)="markDelivered(order)">
                         <app-icon name="check-circle" [size]="18" />
                         <span>MARK AS DELIVERED</span>
                       </button>
-                      <button class="btn-action-secondary print" (click)="openReceipt(order)" title="Print Thermal Slip">
+                      <button class="btn-action-subtle btn-print-kot" (click)="openReceipt(order)" title="Print Receipt">
                         <app-icon name="printer" [size]="18" />
                       </button>
                     }
 
                     @if (order.status === 'delivered') {
-                      <button class="btn-action-secondary print full-width" (click)="openReceipt(order)">
+                      <button class="btn-action-subtle full-width-btn" (click)="openReceipt(order)">
                         <app-icon name="printer" [size]="18" />
-                        <span>Print Thermal Receipt Slip</span>
+                        <span>Print Customer Receipt</span>
                       </button>
                     }
                   </div>
@@ -325,97 +368,106 @@
       }
 
       <!-- ============================================== -->
-      <!-- TAB 2: MENU & STOCK MANAGEMENT                -->
+      <!-- TAB 2: MENU & STOCK MANAGEMENT (Light Theme)   -->
       <!-- ============================================== -->
       @if (activeTab() === 'menu') {
-        <div class="menu-tab-view">
-          <!-- Search & Filter Controls -->
-          <div class="menu-controls-strip">
-            <div class="search-input-box">
+        <div class="menu-management-screen">
+          <!-- Search & Filter Bar -->
+          <div class="menu-toolbar-card">
+            <div class="search-field-box">
               <app-icon name="search" [size]="18" />
               <input
                 type="text"
-                placeholder="Search dishes..."
+                placeholder="Search dishes by name..."
                 [(ngModel)]="dishSearch"
               />
               @if (dishSearch) {
-                <button class="btn-clear-search" (click)="dishSearch = ''">
+                <button class="btn-clear-txt" (click)="dishSearch = ''">
                   <app-icon name="x" [size]="16" />
                 </button>
               }
             </div>
 
-            <div class="filter-controls-row">
-              <select [(ngModel)]="selectedCategory" class="category-select">
+            <div class="filter-dropdowns-row">
+              <select [(ngModel)]="selectedCategory" class="clean-select">
                 <option value="all">All Categories</option>
                 @for (c of categories; track c.id) {
                   <option [value]="c.id">{{ c.label }}</option>
                 }
               </select>
 
-              <select [(ngModel)]="availabilityFilter" class="avail-select">
-                <option value="all">All Stock Status</option>
+              <select [(ngModel)]="availabilityFilter" class="clean-select">
+                <option value="all">All Dishes</option>
                 <option value="in-stock">In Stock Only ({{ inStockCount() }})</option>
                 <option value="sold-out">Sold Out Only ({{ soldOutCount() }})</option>
               </select>
 
-              <button class="btn-add-dish-primary" (click)="openAddDishModal()">
-                <app-icon name="plus" [size]="18" />
+              <button class="btn-add-dish-btn" (click)="openAddDishModal()">
+                <app-icon name="plus" [size]="16" />
                 <span>Add Dish</span>
               </button>
             </div>
           </div>
 
-          <!-- Dishes Table / Card Grid -->
-          <div class="dishes-list-grid">
+          <!-- Dishes List -->
+          <div class="dish-item-stack">
             @for (dish of filteredDishes(); track dish.id) {
-              <div class="dish-partner-card" [class.sold-out-card]="!dish.isAvailable">
-                <div class="dish-thumb-wrap">
-                  <img [src]="dish.imageUrl" [alt]="dish.name" (error)="$event.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80'" />
+              <div class="dish-row-card" [class.is-sold-out]="!dish.isAvailable">
+                <!-- Actual Dish Image -->
+                <div class="dish-photo-square">
+                  @if (dish.imageUrl) {
+                    <img [src]="dish.imageUrl" [alt]="dish.name" (error)="onImgError($event)" />
+                  }
+                  <div class="dish-photo-placeholder">
+                    <app-icon name="utensils" [size]="22" />
+                  </div>
                   @if (!dish.isAvailable) {
-                    <span class="sold-out-ribbon">SOLD OUT</span>
+                    <div class="sold-out-overlay">OFF</div>
                   }
                 </div>
 
-                <div class="dish-details">
-                  <div class="name-row">
-                    <span class="diet-dot" [class.veg]="dish.dietType === 'veg'" [class.non-veg]="dish.dietType === 'non-veg'"></span>
-                    <strong class="dish-title">{{ dish.name }}</strong>
+                <!-- Dish Info -->
+                <div class="dish-info-block">
+                  <div class="dish-name-diet-line">
+                    <span class="diet-badge-indicator" [class.veg]="dish.dietType === 'veg'" [class.non-veg]="dish.dietType === 'non-veg'"></span>
+                    <strong class="dish-name-heading">{{ dish.name }}</strong>
                   </div>
-                  <span class="dish-category-tag">{{ dish.category }}</span>
+                  <span class="dish-sub-cat">{{ dish.category }}</span>
 
                   <!-- Price Inline Editor -->
-                  <div class="price-editor-row">
-                    <span class="rs-symbol">₹</span>
+                  <div class="price-input-row">
+                    <span class="inr-sign">₹</span>
                     <input
                       type="number"
                       [value]="dish.price"
-                      #priceInput
-                      (blur)="updatePrice(dish, priceInput.value)"
-                      (keyup.enter)="updatePrice(dish, priceInput.value)"
-                      class="price-num-input"
+                      #pInput
+                      (blur)="updatePrice(dish, pInput.value)"
+                      (keyup.enter)="updatePrice(dish, pInput.value)"
+                      class="clean-price-input"
                     />
                   </div>
                 </div>
 
-                <!-- Stock Switch (Instant 1-Click Toggle) -->
-                <div class="stock-switch-wrap">
+                <!-- Stock Toggle Switch (Swiggy / iOS Style) -->
+                <div class="dish-switch-col">
                   <button
-                    class="btn-stock-toggle"
-                    [class.in-stock]="dish.isAvailable"
-                    [class.sold-out]="!dish.isAvailable"
+                    class="swiggy-toggle-btn"
+                    [class.on]="dish.isAvailable"
+                    [class.off]="!dish.isAvailable"
                     (click)="toggleDishStock(dish)"
                   >
-                    <span class="switch-ball"></span>
-                    <span class="switch-text">{{ dish.isAvailable ? 'IN STOCK' : 'SOLD OUT' }}</span>
+                    <span class="toggle-track">
+                      <span class="toggle-thumb"></span>
+                    </span>
+                    <span class="toggle-label-text">{{ dish.isAvailable ? 'IN STOCK' : 'SOLD OUT' }}</span>
                   </button>
 
-                  <div class="dish-mini-actions">
-                    <button class="btn-mini-tool edit" (click)="openEditDishModal(dish)" title="Edit Details">
-                      <app-icon name="edit" [size]="15" />
+                  <div class="dish-mini-actions-row">
+                    <button class="mini-tool-btn edit" (click)="openEditDishModal(dish)" title="Edit Details">
+                      <app-icon name="edit" [size]="16" />
                     </button>
-                    <button class="btn-mini-tool delete" (click)="deleteDish(dish)" title="Delete Dish">
-                      <app-icon name="trash-2" [size]="15" />
+                    <button class="mini-tool-btn delete" (click)="deleteDish(dish)" title="Delete Dish">
+                      <app-icon name="trash-2" [size]="16" />
                     </button>
                   </div>
                 </div>
@@ -426,50 +478,50 @@
       }
 
       <!-- ============================================== -->
-      <!-- TAB 3: STORE TIMING & STATUS                  -->
+      <!-- TAB 3: STORE TIMING & STATUS (Light Theme)     -->
       <!-- ============================================== -->
       @if (activeTab() === 'store') {
-        <div class="store-tab-view">
-          <div class="store-status-hero" [class.is-open]="statusService.status().isOpen">
-            <div class="hero-icon-circle">
-              <app-icon [name]="statusService.status().isOpen ? 'check-circle' : 'alert-circle'" [size]="48" />
+        <div class="store-timing-screen">
+          <div class="status-summary-card" [class.is-live]="statusService.status().isOpen">
+            <div class="status-icon-bubble">
+              <app-icon [name]="statusService.status().isOpen ? 'check-circle' : 'alert-circle'" [size]="40" />
             </div>
-            <h2>Kitchen Store is currently {{ statusService.status().isOpen ? 'OPEN' : 'CLOSED' }}</h2>
+            <h2>Kitchen is {{ statusService.status().isOpen ? 'OPEN & TAKING ORDERS' : 'PAUSED / CLOSED' }}</h2>
             <p>{{ statusService.status().statusText }}</p>
           </div>
 
-          <div class="mode-options-grid">
+          <div class="mode-cards-grid">
             <div
-              class="mode-card"
-              [class.active]="statusService.kitchenOverride() === 'open'"
+              class="choice-card"
+              [class.selected]="statusService.kitchenOverride() === 'open'"
               (click)="setStoreMode('open')"
             >
-              <div class="mode-header">
-                <span class="dot-open"></span>
+              <div class="choice-title">
+                <span class="status-dot green"></span>
                 <strong>Force Store OPEN</strong>
               </div>
-              <p>Orders accepted immediately. Use this to open early or take special bulk orders.</p>
+              <p>Accept orders immediately anytime. Best for taking bulk orders or opening early.</p>
             </div>
 
             <div
-              class="mode-card"
-              [class.active]="statusService.kitchenOverride() === 'closed'"
+              class="choice-card"
+              [class.selected]="statusService.kitchenOverride() === 'closed'"
               (click)="setStoreMode('closed')"
             >
-              <div class="mode-header">
-                <span class="dot-closed"></span>
+              <div class="choice-title">
+                <span class="status-dot red"></span>
                 <strong>Force Store CLOSED (Pause)</strong>
               </div>
               <p>Kitchen is busy or out of ingredients. Customers will see "Kitchen Paused" and cannot place orders.</p>
             </div>
 
             <div
-              class="mode-card"
-              [class.active]="statusService.kitchenOverride() === 'auto'"
+              class="choice-card"
+              [class.selected]="statusService.kitchenOverride() === 'auto'"
               (click)="setStoreMode('auto')"
             >
-              <div class="mode-header">
-                <span class="dot-auto"></span>
+              <div class="choice-title">
+                <span class="status-dot blue"></span>
                 <strong>Auto Schedule Mode</strong>
               </div>
               <p>Automatically opens at 10:00 AM and closes at 1:00 AM midnight daily.</p>
@@ -479,49 +531,49 @@
       }
 
       <!-- ============================================== -->
-      <!-- TAB 4: SETTINGS & SECURITY                    -->
+      <!-- TAB 4: SETTINGS & PIN MANAGEMENT (Light Theme) -->
       <!-- ============================================== -->
       @if (activeTab() === 'settings') {
-        <div class="settings-tab-view">
-          <div class="settings-card">
-            <h3>Change Partner PIN</h3>
-            <p>Update your 6-digit admin PIN for accessing this app.</p>
+        <div class="settings-screen">
+          <div class="clean-settings-card">
+            <h3 class="card-heading">Change Partner Admin PIN</h3>
+            <p class="card-sub">Update the 6-digit PIN used to access this partner app.</p>
 
-            <div class="settings-form-row">
+            <div class="pin-change-form">
               <input
                 type="password"
                 placeholder="New 6-digit PIN"
                 [(ngModel)]="newPinInput"
-                class="settings-input"
+                class="clean-input"
               />
               <input
                 type="password"
                 placeholder="Confirm New PIN"
                 [(ngModel)]="confirmPinInput"
-                class="settings-input"
+                class="clean-input"
               />
-              <button class="btn-save-pin" (click)="onChangePin()">
+              <button class="btn-update-pin" (click)="onChangePin()">
                 <app-icon name="lock" [size]="16" />
-                <span>Update PIN</span>
+                <span>Save New PIN</span>
               </button>
             </div>
           </div>
 
-          <div class="settings-card">
-            <h3>Cloud Database Status</h3>
-            <p>Direct Google Firebase Firestore connection (`tbzb_orders` and `tbzb_menu`).</p>
-            <div class="cloud-status-badge">
-              <span class="dot-green"></span>
-              <span>Connected to project: <strong>tbzb-bidar</strong></span>
+          <div class="clean-settings-card">
+            <h3 class="card-heading">Cloud Database Connection</h3>
+            <p class="card-sub">Connected in real-time to Google Firebase Firestore (`tbzb_orders` and `tbzb_menu`).</p>
+            <div class="cloud-info-strip">
+              <span class="dot-online"></span>
+              <span>Project ID: <strong>tbzb-bidar</strong> (Firestore Cloud)</span>
             </div>
-            <div class="sync-actions">
-              <button class="btn-sync-tool" (click)="adminService.syncFromCloud(true)">
+            <div class="cloud-buttons-row">
+              <button class="btn-cloud-tool" (click)="adminService.syncFromCloud(true)">
                 <app-icon name="refresh-cw" [size]="16" />
-                <span>Pull Menu from Cloud</span>
+                <span>Sync Latest Menu</span>
               </button>
-              <button class="btn-sync-tool" (click)="adminService.syncToCloud()">
+              <button class="btn-cloud-tool" (click)="adminService.syncToCloud()">
                 <app-icon name="database" [size]="16" />
-                <span>Push Menu to Cloud</span>
+                <span>Push Local Changes</span>
               </button>
             </div>
           </div>
@@ -530,37 +582,36 @@
     </main>
   }
 
-  <!-- 4. MODALS -->
-  <!-- Thermal Receipt Modal -->
+  <!-- 4. THERMAL RECEIPT PRINT MODAL -->
   <app-receipt-modal
     [isOpen]="isReceiptModalOpen()"
     [order]="selectedReceiptOrder()"
     (close)="closeReceipt()"
   ></app-receipt-modal>
 
-  <!-- Add/Edit Dish Modal -->
+  <!-- 5. ADD / EDIT DISH MODAL (Light Theme) -->
   @if (isDishModalOpen()) {
-    <div class="modal-backdrop" (click)="isDishModalOpen.set(false)">
-      <div class="modal-box" (click)="$event.stopPropagation()">
-        <div class="modal-head">
+    <div class="modal-dim-backdrop" (click)="isDishModalOpen.set(false)">
+      <div class="modal-card-box" (click)="$event.stopPropagation()">
+        <div class="modal-card-header">
           <h3>{{ isNewDish() ? 'Add New Dish' : 'Edit Dish' }}</h3>
-          <button class="btn-close-modal" (click)="isDishModalOpen.set(false)">
+          <button class="btn-close-x" (click)="isDishModalOpen.set(false)">
             <app-icon name="x" [size]="20" />
           </button>
         </div>
 
-        <form (ngSubmit)="saveDish()" class="dish-modal-form">
-          <div class="form-group">
+        <form (ngSubmit)="saveDish()" class="clean-dish-form">
+          <div class="field-item">
             <label>Dish Name</label>
             <input type="text" [(ngModel)]="editingDish.name" name="dishName" required />
           </div>
 
-          <div class="form-row-2">
-            <div class="form-group">
+          <div class="field-row-2">
+            <div class="field-item">
               <label>Price (₹)</label>
               <input type="number" [(ngModel)]="editingDish.price" name="dishPrice" required />
             </div>
-            <div class="form-group">
+            <div class="field-item">
               <label>Category</label>
               <select [(ngModel)]="editingDish.category" name="dishCategory">
                 @for (c of categories; track c.id) {
@@ -572,39 +623,39 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="field-item">
             <label>Diet Type</label>
-            <div class="diet-radio-group">
+            <div class="diet-radio-cluster">
               <label><input type="radio" [(ngModel)]="editingDish.dietType" name="dishDiet" value="non-veg" /> Non-Veg</label>
               <label><input type="radio" [(ngModel)]="editingDish.dietType" name="dishDiet" value="veg" /> Pure Veg</label>
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Photo</label>
-            <div class="photo-uploader">
-              <input type="file" accept="image/*" (change)="onImageFileSelected($event)" id="dishPhotoInput" hidden />
-              <label for="dishPhotoInput" class="btn-upload-label">
+          <div class="field-item">
+            <label>Dish Photo</label>
+            <div class="photo-picker-box">
+              <input type="file" accept="image/*" (change)="onImageFileSelected($event)" id="dishImgFile" hidden />
+              <label for="dishImgFile" class="btn-choose-img">
                 <app-icon name="camera" [size]="18" />
-                <span>Choose Photo from Gallery / Camera</span>
+                <span>Choose Photo</span>
               </label>
               @if (editingDish.imageUrl) {
-                <div class="preview-wrap">
+                <div class="preview-square">
                   <img [src]="editingDish.imageUrl" alt="Preview" />
                 </div>
               }
             </div>
           </div>
 
-          <div class="modal-actions-footer">
-            <button type="button" class="btn-cancel" (click)="isDishModalOpen.set(false)">Cancel</button>
-            <button type="submit" class="btn-submit-dish">Save Dish</button>
+          <div class="modal-footer-btns">
+            <button type="button" class="btn-cancel-modal" (click)="isDishModalOpen.set(false)">Cancel</button>
+            <button type="submit" class="btn-save-modal">Save Dish</button>
           </div>
         </form>
       </div>
     </div>
   }
 
-  <!-- Toast Notifications -->
+  <!-- Toast Notification Container -->
   <app-toast-container></app-toast-container>
 </div>
