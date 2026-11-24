@@ -1,6 +1,15 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
+import { registerPlugin } from '@capacitor/core';
 import { KitchenOrder, OrderStatus, PaymentMethod } from '../models/order.model';
 import { ToastService } from './toast.service';
+
+export interface KitchenAlarmPlugin {
+  startMonitor(): Promise<{ started: boolean }>;
+  stopAlarm(): Promise<{ stopped: boolean }>;
+  isAlarmRinging(): Promise<{ isRinging: boolean; orderId: string | null }>;
+}
+
+export const KitchenAlarm = registerPlugin<KitchenAlarmPlugin>('KitchenAlarm');
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +52,11 @@ export class OrderService {
     this.orders().forEach(o => this.knownOrderIds.add(o.orderId));
     this.fetchOrders(true);
     this.startPolling(8000); // 8-second real-time check
+
+    // Start native background kitchen order service
+    try {
+      KitchenAlarm.startMonitor().catch(() => {});
+    } catch (e) {}
   }
 
   private loadCachedOrders(): KitchenOrder[] {
@@ -123,6 +137,9 @@ export class OrderService {
       clearInterval(this.alarmIntervalTimer);
       this.alarmIntervalTimer = null;
     }
+    try {
+      KitchenAlarm.stopAlarm().catch(() => {});
+    } catch (e) {}
   }
 
   /**

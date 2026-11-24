@@ -12,13 +12,13 @@ $text-primary: #0f172a;
 $text-secondary: #475569;
 $text-muted: #94a3b8;
 
-$color-new: #e23744;         // Swiggy/Zomato urgent red
+$color-new: #e23744; // Swiggy/Zomato urgent red
 $color-new-bg: #fef2f2;
-$color-prep: #d97706;        // Kitchen amber
+$color-prep: #d97706; // Kitchen amber
 $color-prep-bg: #fffbeb;
-$color-dispatch: #2563eb;    // Delivery blue
+$color-dispatch: #2563eb; // Delivery blue
 $color-dispatch-bg: #eff6ff;
-$color-delivered: #15803d;   // Success green
+$color-delivered: #15803d; // Success green
 $color-delivered-bg: #f0fdf4;
 $color-veg: #16a34a;
 $color-nonveg: #dc2626;
@@ -94,12 +94,14 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 
   .siren-details {
     flex: 1;
+
     .alert-headline {
       font-size: 15px;
       font-weight: 800;
       letter-spacing: 0.5px;
       line-height: 1.2;
     }
+
     .alert-caption {
       font-size: 12px;
       opacity: 0.95;
@@ -120,6 +122,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
     gap: 6px;
     cursor: pointer;
     backdrop-filter: blur(4px);
+
     &:active {
       background: rgba(255, 255, 255, 0.35);
     }
@@ -127,18 +130,35 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 }
 
 @keyframes sirenPulse {
-  0% { background: #dc2626; }
-  100% { background: #b91c1c; }
+  0% {
+    background: #dc2626;
+  }
+
+  100% {
+    background: #b91c1c;
+  }
 }
 
 @keyframes bellWobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-15deg); }
-  75% { transform: rotate(15deg); }
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(15deg);
+  }
 }
 
 @keyframes pingRing {
-  75%, 100% {
+
+  75%,
+  100% {
     transform: scale(1.4);
     opacity: 0;
   }
@@ -308,9 +328,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         &:hover {
           background: #1e293b;
         }
+
         &:active {
           transform: translateY(1px);
         }
+
         &:disabled {
           background: #94a3b8;
           cursor: not-allowed;
@@ -370,6 +392,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         line-height: 1.1;
         white-space: nowrap;
       }
+
       .partner-badge-text {
         font-size: 9px;
         font-weight: 800;
@@ -446,6 +469,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 
       &.btn-logout {
         color: #dc2626;
+
         &:hover {
           background: #fee2e2;
         }
@@ -455,9 +479,17 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 }
 
 @keyframes onlinePulse {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
-  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
 }
 
 /* ==========================================================================
@@ -474,7 +506,10 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .tab-nav-btn {
     flex: 0 0 auto;
@@ -540,8 +575,13 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 }
 
 @keyframes badgePulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.1); }
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 /* ==========================================================================
@@ -569,7 +609,10 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
     overflow-x: auto;
     padding-bottom: 4px;
     scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .chip-btn {
       flex-shrink: 0;
@@ -595,14 +638,17 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         background: #e23744;
         border-color: #e23744;
       }
+
       &.chip-amber.active {
         background: #d97706;
         border-color: #d97706;
       }
+
       &.chip-blue.active {
         background: #2563eb;
         border-color: #2563eb;
       }
+
       &.chip-green.active {
         background: #15803d;
         border-color: #15803d;
@@ -687,15 +733,19 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
     border-left-color: $color-new;
     background: linear-gradient(180deg, #fffcfc 0%, #ffffff 40px);
   }
+
   &.border-preparing {
     border-left-color: $color-prep;
   }
+
   &.border-out_for_delivery {
     border-left-color: $color-dispatch;
   }
+
   &.border-delivered {
     border-left-color: $color-delivered;
   }
+
   &.border-cancelled {
     border-left-color: $text-muted;
     opacity: 0.75;
@@ -723,6 +773,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         font-weight: 900;
         color: $text-primary;
       }
+
       .order-time-elapsed {
         font-size: 12px;
         color: $text-muted;
@@ -742,21 +793,25 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         color: $color-new;
         border: 1px solid #fecaca;
       }
+
       &.preparing {
         background: $color-prep-bg;
         color: $color-prep;
         border: 1px solid #fde68a;
       }
+
       &.out_for_delivery {
         background: $color-dispatch-bg;
         color: $color-dispatch;
         border: 1px solid #bfdbfe;
       }
+
       &.delivered {
         background: $color-delivered-bg;
         color: $color-delivered;
         border: 1px solid #bbf7d0;
       }
+
       &.cancelled {
         background: #f1f5f9;
         color: $text-secondary;
@@ -781,6 +836,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         font-weight: 800;
         color: $text-primary;
       }
+
       .customer-address {
         font-size: 13px;
         color: $text-secondary;
@@ -788,6 +844,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         align-items: center;
         gap: 4px;
       }
+
       .customer-landmark {
         font-size: 12px;
         color: $text-muted;
@@ -815,12 +872,14 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           color: #2563eb;
           border: 1px solid #dbeafe;
         }
+
         &.whatsapp {
           background: #f0fdf4;
           color: #16a34a;
           border: 1px solid #dcfce7;
           padding: 6px 8px;
         }
+
         &.map {
           background: #f8fafc;
           color: $text-primary;
@@ -885,6 +944,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           color: $text-primary;
           line-height: 1.3;
         }
+
         .dish-unit-price {
           font-size: 12px;
           color: $text-muted;
@@ -905,6 +965,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
       .dish-total-col {
         min-width: 60px;
         text-align: right;
+
         .item-line-total {
           font-size: 14px;
           font-weight: 800;
@@ -946,6 +1007,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         font-size: 13px;
         color: $text-secondary;
       }
+
       .total-figure {
         font-size: 18px;
         font-weight: 900;
@@ -985,9 +1047,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
       &.btn-accept {
         background: #16a34a; // Green accept
       }
+
       &.btn-dispatch {
         background: #2563eb; // Blue dispatch
       }
+
       &.btn-deliver {
         background: #0f172a; // Slate final deliver
       }
@@ -1125,6 +1189,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
         &:hover {
           background: #1e293b;
         }
+
         &:active {
           transform: scale(0.98);
         }
@@ -1151,6 +1216,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 
     &.is-sold-out {
       background: #fafafa;
+
       .dish-name-heading {
         color: $text-muted;
       }
@@ -1220,6 +1286,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
             border: 2px solid $color-veg;
             background: #ffffff;
             position: relative;
+
             &::after {
               content: '';
               position: absolute;
@@ -1233,6 +1300,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
             border: 2px solid $color-nonveg;
             background: #ffffff;
             position: relative;
+
             &::after {
               content: '';
               position: absolute;
@@ -1329,6 +1397,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
 
         &.on .toggle-track {
           background: #16a34a;
+
           .toggle-thumb {
             transform: translateX(22px);
           }
@@ -1340,9 +1409,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           letter-spacing: 0.5px;
           color: $text-muted;
         }
+
         &.on .toggle-label-text {
           color: #15803d;
         }
+
         &.off .toggle-label-text {
           color: #dc2626;
         }
@@ -1367,6 +1438,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           &.edit:hover {
             color: #2563eb;
           }
+
           &.delete:hover {
             color: #dc2626;
           }
@@ -1447,9 +1519,18 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           width: 10px;
           height: 10px;
           border-radius: 50%;
-          &.green { background: #16a34a; }
-          &.red { background: #dc2626; }
-          &.blue { background: #2563eb; }
+
+          &.green {
+            background: #16a34a;
+          }
+
+          &.red {
+            background: #dc2626;
+          }
+
+          &.blue {
+            background: #2563eb;
+          }
         }
       }
 
@@ -1644,7 +1725,9 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0
           color: $text-secondary;
         }
 
-        input[type="text"], input[type="number"], select {
+        input[type="text"],
+        input[type="number"],
+        select {
           height: 42px;
           background: #f8fafc;
           border: 1px solid $border-light;
