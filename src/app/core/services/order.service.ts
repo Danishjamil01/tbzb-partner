@@ -5,7 +5,9 @@ import { ToastService } from './toast.service';
 
 export interface KitchenAlarmPlugin {
   startMonitor(): Promise<{ started: boolean }>;
+  triggerAlert(options: { orderId: string; customer: string; total: string; locality: string }): Promise<{ triggered: boolean }>;
   stopAlarm(): Promise<{ stopped: boolean }>;
+  acknowledgeOrder(options: { orderId: string }): Promise<{ acknowledged: boolean }>;
   isAlarmRinging(): Promise<{ isRinging: boolean; orderId: string | null }>;
 }
 
@@ -280,8 +282,19 @@ export class OrderService {
       // Start ringing if any order is 'new' and unaccepted
       const pendingNewOrders = loadedOrders.filter(o => o.status === 'new');
       if (pendingNewOrders.length > 0 && !this.isAlarmRinging()) {
-        this.startAlarmLoop(pendingNewOrders[0].orderId);
-        this.toastService.show(`🚨 NEW ORDER #${pendingNewOrders[0].orderId} RECEIVED!`, 'success');
+        const latestNew = pendingNewOrders[0];
+        this.startAlarmLoop(latestNew.orderId);
+        if (this.soundEnabled()) {
+          try {
+            KitchenAlarm.triggerAlert({
+              orderId: latestNew.orderId,
+              customer: latestNew.customerName || 'Customer',
+              total: String(latestNew.total || 0),
+              locality: latestNew.areaLocality || 'Bidar'
+            }).catch(() => {});
+          } catch (e) {}
+        }
+        this.toastService.show(`🚨 NEW ORDER #${latestNew.orderId} RECEIVED!`, 'success');
       } else if (!silent) {
         this.toastService.show('Orders refreshed', 'info');
       }
@@ -297,6 +310,9 @@ export class OrderService {
      ========================================================================== */
   async acceptOrder(orderId: string): Promise<void> {
     this.stopAlarm();
+    try {
+      KitchenAlarm.acknowledgeOrder({ orderId }).catch(() => {});
+    } catch (e) {}
     await this.updateOrderStatus(orderId, 'preparing');
   }
 
@@ -310,6 +326,9 @@ export class OrderService {
 
   async cancelOrder(orderId: string): Promise<void> {
     this.stopAlarm();
+    try {
+      KitchenAlarm.acknowledgeOrder({ orderId }).catch(() => {});
+    } catch (e) {}
     await this.updateOrderStatus(orderId, 'cancelled');
   }
 
