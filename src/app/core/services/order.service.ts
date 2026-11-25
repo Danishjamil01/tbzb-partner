@@ -226,7 +226,9 @@ export class OrderService {
     if (!silent) this.isFetching.set(true);
 
     try {
-      const res = await fetch(this.FIRESTORE_BASE);
+      const res = await fetch(`${this.FIRESTORE_BASE}?orderBy=createdAt%20desc&pageSize=50`, {
+        cache: 'no-store'
+      });
       if (!res.ok) {
         if (!silent) this.toastService.show('Could not connect to Cloud Firestore', 'warning');
         return;
@@ -362,11 +364,15 @@ export class OrderService {
       };
 
       const url = `${this.FIRESTORE_BASE}/${orderId}?updateMask.fieldPaths=status&updateMask.fieldPaths=updatedAt`;
-      await fetch(url, {
+      const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      if (!res.ok) {
+        this.toastService.show(`Cloud sync failed (${res.status}). Check internet.`, 'warning');
+        return false;
+      }
       return true;
     } catch (err) {
       console.error('Failed to update status in cloud:', err);

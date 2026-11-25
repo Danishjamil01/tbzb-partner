@@ -50,7 +50,7 @@ public class KitchenOrderManager {
     private static final String PREFS_NAME = "tbzb_kitchen_prefs";
     private static final String PREF_KNOWN_ORDERS = "known_order_ids";
 
-    private static final String FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/tbzb-bidar/databases/(default)/documents/tbzb_orders?pageSize=25";
+    private static final String FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/tbzb-bidar/databases/(default)/documents/tbzb_orders?orderBy=createdAt%20desc&pageSize=25";
 
     private static KitchenOrderManager instance;
 
